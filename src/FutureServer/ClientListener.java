@@ -16,11 +16,18 @@ public class ClientListener implements IListener {
     @Override
     public void listen(int port) throws IOException {
         mServerSocket = new ServerSocket(port);
-        Socket currentClient;
+        // indefinitely listen for new clients
         while (true){
-            // new client connection
-            currentClient = mServerSocket.accept();
-            //handle the new client
+            /*
+            declaring socket inside while loop because lambda in thread forces you
+            to transfer a final or effectively final variable
+            */
+            // accept new client connection
+            Socket currentClient = mServerSocket.accept();
+            System.out.println("[+] Client connected on " + currentClient.getInetAddress());
+
+            // handle the new client
+            new Thread(() -> mClientHandler.handleClient(currentClient)).start();
             mClientHandler.handleClient(currentClient);
         }
     }

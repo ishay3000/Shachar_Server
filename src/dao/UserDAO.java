@@ -16,7 +16,8 @@ public class UserDAO implements IHiberDao<MySqlUsersEntity> {
     }
 
     @Override
-    public void add(MySqlUsersEntity item) {
+    public boolean add(MySqlUsersEntity item) {
+        boolean isActionOk = true;
         Transaction transaction = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
 
@@ -27,16 +28,19 @@ public class UserDAO implements IHiberDao<MySqlUsersEntity> {
         } catch (RuntimeException e) {
             if (transaction != null) {
                 transaction.rollback();
+                isActionOk = false;
             }
             e.printStackTrace();
         } finally {
 //            session.flush();
             session.close();
         }
+        return isActionOk;
     }
 
     @Override
-    public void delete(int id) {
+    public boolean delete(int id) {
+        boolean isActionOk = true;
         Transaction trns = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
@@ -47,16 +51,19 @@ public class UserDAO implements IHiberDao<MySqlUsersEntity> {
         } catch (RuntimeException e) {
             if (trns != null) {
                 trns.rollback();
+                isActionOk = false;
             }
             e.printStackTrace();
         } finally {
             session.flush();
             session.close();
         }
+        return isActionOk;
     }
 
     @Override
-    public void update(MySqlUsersEntity item) {
+    public boolean update(MySqlUsersEntity item) {
+        boolean isActionOk = true;
         Transaction trns = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
@@ -66,12 +73,14 @@ public class UserDAO implements IHiberDao<MySqlUsersEntity> {
         } catch (RuntimeException e) {
             if (trns != null) {
                 trns.rollback();
+                isActionOk = false;
             }
             e.printStackTrace();
         } finally {
 //            session.flush();
             session.close();
         }
+        return isActionOk;
     }
 
     @Override
