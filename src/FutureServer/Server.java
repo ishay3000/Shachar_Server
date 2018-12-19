@@ -29,6 +29,7 @@ public class Server {
     public void start() {
         new Thread(() -> {
             try {
+                System.out.println("Listening for connections...");
                 mListener.listen(PORT);
             } catch (IOException e) {
                 System.err.println(e.getMessage());
@@ -42,11 +43,7 @@ public class Server {
      * @param user the newly-added user
      * @return whether the client was registered
      */
-    public synchronized boolean registerClient(MySqlUsersEntity user) {
-        if (UserDAO.OUR_INSTANCE.add(user)) {
-            return true;
-        } else {
-            return false;
-        }
+    synchronized boolean registerUser(MySqlUsersEntity user) {
+        return UserDAO.OUR_INSTANCE.add(user);
     }
 }

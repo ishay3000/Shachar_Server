@@ -24,11 +24,10 @@ public class ClientListener implements IListener {
             */
             // accept new client connection
             Socket currentClient = mServerSocket.accept();
-            System.out.println("[+] Client connected on " + currentClient.getInetAddress());
+            System.out.println("[+] Client connected on: " + currentClient.getInetAddress());
 
             // handle the new client
             new Thread(() -> mClientHandler.handleClient(currentClient)).start();
-            mClientHandler.handleClient(currentClient);
         }
     }
 }

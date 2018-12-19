@@ -1,6 +1,7 @@
 package FutureServer;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 /**
  * client commands
@@ -10,7 +11,7 @@ enum Commands {
 }
 
 enum Statuses {
-    OK, USER_EXISTS, ERR, NULL
+    OK, ERR, NULL
 }
 
 /**
@@ -30,7 +31,9 @@ public class ClientPacket {
      * @return the data retrieved by the key
      */
     public <T> T getDataByKey(String key, Class<T> classOfT) {
-        T data = gson.fromJson(JsonFormattedData, classOfT);
+        JsonObject jsonObject = gson.fromJson(JsonFormattedData, JsonObject.class);
+        String specificData = jsonObject.get(key).toString();
+        T data = gson.fromJson(specificData, classOfT);
         return data;
     }
 }

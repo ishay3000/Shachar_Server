@@ -1,11 +1,4 @@
-import Ishay.MySqlUsersEntity;
-import com.google.gson.Gson;
-import dao.UserDAO;
-import server.Server;
-
-import java.util.List;
-
-import static java.lang.System.exit;
+import FutureServer.Server;
 
 public class App {
     public static void main(String[] args) {
@@ -34,13 +27,15 @@ public class App {
                 .forEach(System.out::println);*/
 //#endregion
 
-        Server.OUR_INSTANCE.run();
+        /*Server.OUR_INSTANCE.run();
         Thread t = new Thread(Server.OUR_INSTANCE);
         try {
             t.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        Server.OUR_INSTANCE.start();
 
         //exit(0);
     }

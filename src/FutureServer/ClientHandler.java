@@ -13,12 +13,14 @@ public class ClientHandler implements IClientHandler, IRequest {
     private DataOutputStream mOutStream;
     private DataInputStream mInStream;
     private Socket mClientSocket;
+    private IClientSender mClientSender;
     private Gson gson;
     //#endregion
 
     @Override
     public void handleClient(Socket clientSocket) {
         mClientSocket = clientSocket;
+        mClientSender = new ClientSender();
         gson = new Gson();
         this.initIOStreams();
         handleRequests();
@@ -58,6 +60,21 @@ public class ClientHandler implements IClientHandler, IRequest {
         return request;
     }
 
+    /**
+     * sends the client a feedback regarding their request
+     *
+     * @param clientRequestStatus the status of the client request's operation
+     */
+    private void sendFeedbackPacket(Commands clientRequestCommand, boolean clientRequestStatus) {
+        // assemble the packet
+        ClientPacket packet = new ClientPacket();
+        packet.Command = clientRequestCommand;
+        packet.Status = clientRequestStatus ? Statuses.OK : Statuses.ERR;
+
+        // send the packet
+        mClientSender.send(mClientSocket, packet);
+    }
+
     @Override
     public void processRequest(String request) {
         ClientPacket clientPacket = gson.fromJson(request, ClientPacket.class);
@@ -67,7 +84,8 @@ public class ClientHandler implements IClientHandler, IRequest {
                 // extract the user from the json
                 MySqlUsersEntity user = clientPacket.getDataByKey("User", MySqlUsersEntity.class);
                 // attempt to register user
-                Server.OUR_INSTANCE.registerClient(user);
+                boolean isRegisterOK = Server.OUR_INSTANCE.registerUser(user);
+                this.sendFeedbackPacket(command, isRegisterOK);
                 break;
             case SEND:
                 break;

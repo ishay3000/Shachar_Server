@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO implements IHiberDao<MySqlUsersEntity> {
-    public static UserDAO OUR_INSTANCE;
+    public static UserDAO OUR_INSTANCE = new UserDAO();
 
     private UserDAO() {
     }
@@ -24,7 +24,8 @@ public class UserDAO implements IHiberDao<MySqlUsersEntity> {
         try {
             transaction = session.beginTransaction();
             session.save(item);
-            session.getTransaction().commit();
+//            session.getTransaction().commit();
+            transaction.commit();
         } catch (RuntimeException e) {
             if (transaction != null) {
                 transaction.rollback();
