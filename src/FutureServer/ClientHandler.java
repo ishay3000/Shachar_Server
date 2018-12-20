@@ -2,6 +2,7 @@ package FutureServer;
 
 import Ishay.MySqlUsersEntity;
 import com.google.gson.Gson;
+import dao.LoginDetails;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -90,6 +91,14 @@ public class ClientHandler implements IClientHandler, IRequest {
             case SEND:
                 break;
             case LOGIN:
+                LoginDetails loginDetails = clientPacket.getDataByKey("LoginDetails", LoginDetails.class);
+                MySqlUsersEntity usersEntity = Server.OUR_INSTANCE.login(loginDetails.uID, loginDetails.pass);
+                boolean isLoginOK = usersEntity != null;
+                if (isLoginOK) {
+                    Server.OUR_INSTANCE.addClientToMap(mClientSocket, usersEntity);
+                }
+                // send feedback
+                sendFeedbackPacket(clientPacket.Command, isLoginOK);
                 break;
             case BROADCAST:
                 break;

@@ -36,8 +36,8 @@ public interface IHiberDao<T> {
 
     /**
      * retrieves an item from the database by id
-     * @param itemID the item's id
+     * @param itemIDBySpecificFormat the item's id by the needs of the DAO class. This wil leb boxed in an object.
      * @return the item from the database
      */
-    T getItemByID(int itemID);
+    T getItemByID(Object itemIDBySpecificFormat);
 }

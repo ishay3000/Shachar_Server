@@ -102,20 +102,26 @@ public class UserDAO implements IHiberDao<MySqlUsersEntity> {
     }
 
     @Override
-    public MySqlUsersEntity getItemByID(int itemID) {
+    public MySqlUsersEntity getItemByID(Object itemID) {
+        // type checking
+        if (!(itemID instanceof LoginDetails)) {
+            return null;
+        }
         MySqlUsersEntity user = null;
+        LoginDetails loginDetails = (LoginDetails) itemID;
         Transaction trns = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
             trns = session.beginTransaction();
-            String queryString = "from MySqlUsersEntity where id = :itemID";
+            String queryString = "from MySqlUsersEntity where userid = :uID and password = :pass";
             Query query = session.createQuery(queryString);
-            query.setInteger("itemID", itemID);
+            query.setInteger("uID", loginDetails.uID);
+            query.setString("pass", loginDetails.pass);
             user = (MySqlUsersEntity) query.uniqueResult();
         } catch (RuntimeException e) {
             e.printStackTrace();
         } finally {
-            session.flush();
             session.close();
         }
         return user;

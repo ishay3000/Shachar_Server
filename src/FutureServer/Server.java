@@ -1,6 +1,7 @@
 package FutureServer;
 
 import Ishay.MySqlUsersEntity;
+import dao.LoginDetails;
 import dao.UserDAO;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ public class Server {
     // server singleton
     public static Server OUR_INSTANCE = new Server();
     // clients map
-    private HashMap<Socket, Integer> mClientsMap;
+    private HashMap<Socket, MySqlUsersEntity> mClientsMap;
     // listener
     private IListener mListener;
 
@@ -22,7 +23,7 @@ public class Server {
 
 
     private Server() {
-        mClientsMap = new HashMap<>();
+        mClientsMap = new HashMap<Socket, MySqlUsersEntity>();
         mListener = new ClientListener();
     }
 
@@ -45,5 +46,27 @@ public class Server {
      */
     synchronized boolean registerUser(MySqlUsersEntity user) {
         return UserDAO.OUR_INSTANCE.add(user);
+    }
+
+    /**
+     * attempts to perform a login to a uname-pass set
+     *
+     * @param uID  user ID
+     * @param pass user password
+     * @return null of usersEntity if the login was successful
+     */
+    synchronized MySqlUsersEntity login(int uID, String pass) {
+        LoginDetails loginDetails = new LoginDetails(uID, pass);
+        return UserDAO.OUR_INSTANCE.getItemByID(loginDetails);
+    }
+
+    /**
+     * adds the client socket to the clients map
+     *
+     * @param clientSocket the client socket
+     * @param usersEntity  the user object of the client, retrieved by the login method
+     */
+    synchronized void addClientToMap(Socket clientSocket, MySqlUsersEntity usersEntity) {
+        mClientsMap.put(clientSocket, usersEntity);
     }
 }
